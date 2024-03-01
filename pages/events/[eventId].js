@@ -1,6 +1,7 @@
 
 
 import { useRouter } from "next/router";
+import Head from "next/head";
 import { getEventById, getFeaturedEvents } from "../../helpers/api-util.js";
 const EventDetailPage = (props) => {
 
@@ -16,6 +17,12 @@ const EventDetailPage = (props) => {
     }
     return (
         <div className="container mx-auto flex flex-col gap-5 justify-center min-h-screen">
+            <Head>
+                <title>{event.title}</title>
+                <meta
+                    name="description"
+                    content='Explore and find many events' />
+            </Head>
             <h1 className="text-5xl font-bold text-center ">{event.title}</h1>
             <div className=" flex flex-col lg:flex-row w-full  lg:w-3/4 gap-3 lg:shadow-2xl mx-auto ">
                 <img src={`/${event.image}`} className="w-96 h-96 self-center" />

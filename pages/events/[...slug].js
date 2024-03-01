@@ -3,28 +3,53 @@ import { useRouter } from 'next/router';
 
 import { getFilteredEvents } from '../../helpers/api-util.js';
 import EventList from '../../components//events/EventList.js'
+import Head from 'next/head.js';
+import { Fragment } from 'react';
 
 
 const FilteredEventsPage = (props) => {
   const router = useRouter();
 
-  if (props.hasError) {
-    return <p className='text-center text-xl font-bold'>Invalid Filter. Please adjust your values</p>
-  }
-
-
-  const filteredEvents = props.events
-
-  if (!filteredEvents || filteredEvents.length === 0) {
-    return <p className='text-center font-bold text-xl'>No Events found</p>
-  }
-
-
-  return (
-    <div>
-      <EventList items={filteredEvents} />
-    </div>
+  const pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta
+        name="description"
+        content='All events for filtered data' />
+    </Head>
   )
+
+  if (props.hasError) {
+    return (
+      <Fragment>
+        { pageHeadData }
+        < p className = 'text-center text-xl font-bold' > Invalid Filter.Please adjust your values</p >
+      </Fragment>
+    )
+  }
+
+
+const filteredEvents = props.events
+
+if (!filteredEvents || filteredEvents.length === 0) {
+  return (
+    <Fragment>
+      {pageHeadData}
+      <p className='text-center font-bold text-xl'>No Events found</p>
+    </Fragment>
+  )
+}
+
+
+
+
+
+return (
+  <div>
+    {pageHeadData}
+    <EventList items={filteredEvents} />
+  </div>
+)
 }
 
 export async function getServerSideProps(context) {
@@ -52,7 +77,7 @@ export async function getServerSideProps(context) {
     month: numMonth
   });
 
-  
+
 
 
   return {
