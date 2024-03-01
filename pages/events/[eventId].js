@@ -1,15 +1,18 @@
 
 
 import { useRouter } from "next/router";
-import { getEventById } from "../../data/dummy-data";
-const EventDetailPage = () => {
+import { getEventById, getFeaturedEvents } from "../../helpers/api-util.js";
+const EventDetailPage = (props) => {
 
-    const router = useRouter();
-    const eventId = router.query.eventId;
-    const event = getEventById(eventId);
+    const event = props.event
 
     if (!event) {
-        return <p>No event Found!</p>
+        return (
+            <div className="text-center">
+                <p>No event Found!</p>
+
+            </div>
+        )
     }
     return (
         <div className="container mx-auto flex flex-col gap-5 justify-center min-h-screen">
@@ -20,11 +23,36 @@ const EventDetailPage = () => {
                     <p className="mt-3 text-xl font-semibold">Location: {event.location}</p>
                     <p className="mt-3 text-xl font-semibold">Date: {event.date}</p>
                 </div>
-                
+
             </div>
             <p className="text-xl font-semibold text-center ">{event.description}</p>
         </div>
     )
+}
+
+export async function getStaticProps(context) {
+    const eventId = context.params.eventId;
+
+    const event = await getEventById(eventId);
+    return {
+        props: {
+            event: event
+        },
+        revalidate: 30,
+    }
+
+
+};
+
+export async function getStaticPaths() {
+    const events = await getFeaturedEvents();
+
+    const paths = events.map(event => ({ params: { eventId: event.id } }))
+
+    return {
+        paths: paths,
+        fallback: 'blocking'
+    }
 }
 
 export default EventDetailPage
